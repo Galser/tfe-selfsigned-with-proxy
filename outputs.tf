@@ -1,6 +1,6 @@
 output "cert_url" {
   #value = "${module.sslcert_letsencrypt.cert_url}"
-  value = "CERTIFICATE GENERATION IS DISABLED"
+  value = "REAL CERTIFICATE GENERATION IS DISABLED"
 }
 
 output "public_ip" {

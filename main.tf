@@ -80,12 +80,13 @@ module "disk_aws_snapshots" {
 
 
 # Certificate : SSL from Let'sEncrypt
-#module "sslcert_letsencrypt" {
-#
-#  source = "./modules/sslcert_letsencrypt"
-#
-#  host         = var.site_record
-#  domain       = var.site_domain
-#  dns_provider = "cloudflare"
-#}
+module "sslcert_selfsigned" {
+
+  source = "./modules/sslcert_selfsigned/"
+
+  host   = var.site_record
+  domain = var.site_domain
+  #dns_provider = "cloudflare"  # not required for this cert
+  # provider
+}
 
