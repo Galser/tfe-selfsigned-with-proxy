@@ -51,7 +51,6 @@ To learn more about the mentioned above tools and technologies - please check se
 
 
 # TODO
-- [ ] create code for self-signed cert generation
 - [ ] install TFE in Prod mode
 - [ ] decide on various proxy. test them - ELB, Nginx, Squid, Oops and etc.
 - [ ] create code for proxy deploy
@@ -68,6 +67,7 @@ To learn more about the mentioned above tools and technologies - please check se
 - [x] define objectives 
 - [x] reuse code for compute infra
 - [x] import mount disk (EBS) code as module, test
+- [x] create code for self-signed cert generation
 
 
 # Run logs
