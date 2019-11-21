@@ -3,7 +3,7 @@ variable "site_domain" {
 }
 
 variable "site_record" {
-  default = "tfe-ext-dr-1"
+  default = "tfe-ssc-3"
 }
 
 variable "region" {

@@ -47,13 +47,45 @@ module "compute_aws" {
   key_path        = "~/.ssh/id_rsa"
 }
 
-# Certificate : SSL from Let'sEncrypt
-module "sslcert_letsencrypt" {
 
-  source = "./modules/sslcert_letsencrypt"
+# Disk Storage : EBS , DATA
+module "disk_aws_data" {
+  source = "./modules/disk_aws"
 
-  host         = var.site_record
-  domain       = var.site_domain
-  dns_provider = "cloudflare"
+  name             = "ag-${var.site_record}-data"
+  size             = 50 # G
+  mount_point      = "/tfe-data"
+  device_name      = "/dev/sdf"
+  availabilityZone = var.availabilityZone
+  instance_id      = module.compute_aws.instance_id
+  instance_ip      = module.compute_aws.public_ip
+  key_path         = "~/.ssh/id_rsa"
+  tag              = "ebs-${var.site_record}-data"
 }
+
+# Disk Storage : EBS , SNAPSHOTS
+module "disk_aws_snapshots" {
+  source = "./modules/disk_aws"
+
+  name             = "ag-${var.site_record}-snapshots"
+  size             = 100 # G
+  mount_point      = "/tfe-snapshots"
+  device_name      = "/dev/sdg"
+  availabilityZone = var.availabilityZone
+  instance_id      = module.compute_aws.instance_id
+  instance_ip      = module.compute_aws.public_ip
+  key_path         = "~/.ssh/id_rsa"
+  tag              = "ebs-${var.site_record}-snapshots"
+}
+
+
+# Certificate : SSL from Let'sEncrypt
+#module "sslcert_letsencrypt" {
+#
+#  source = "./modules/sslcert_letsencrypt"
+#
+#  host         = var.site_record
+#  domain       = var.site_domain
+#  dns_provider = "cloudflare"
+#}
 
