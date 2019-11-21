@@ -51,8 +51,6 @@ To learn more about the mentioned above tools and technologies - please check se
 
 
 # TODO
-- [ ] reuse code for compute infra
-- [ ] import mount disk (EBS) code as module, test
 - [ ] create code for self-signed cert generation
 - [ ] install TFE in Prod mode
 - [ ] decide on various proxy. test them - ELB, Nginx, Squid, Oops and etc.
@@ -68,6 +66,8 @@ To learn more about the mentioned above tools and technologies - please check se
 
 # DONE
 - [x] define objectives 
+- [x] reuse code for compute infra
+- [x] import mount disk (EBS) code as module, test
 
 
 # Run logs
