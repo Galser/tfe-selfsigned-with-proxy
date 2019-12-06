@@ -79,7 +79,7 @@ module "disk_aws_snapshots" {
 }
 
 
-# Certificate : SSL from Let'sEncrypt
+# Certificate : Self-signed SSL
 module "sslcert_selfsigned" {
 
   source = "./modules/sslcert_selfsigned/"
@@ -88,5 +88,16 @@ module "sslcert_selfsigned" {
   domain = var.site_domain
   #dns_provider = "cloudflare"  # not required for this cert
   # provider
+}
+
+
+resource "aws_acm_certificate" "cert" {
+  private_key      = "${module.sslcert_selfsigned.cert_private_key_pem}"
+  certificate_body = "${module.sslcert_selfsigned.cert_pem}"
+	#  certificate_chain = "${module.sslcert_selfsigned.cert_bundle}"
+}
+
+output "cert_key" {
+	value = aws_acm_certificate.cert.private_key
 }
 
