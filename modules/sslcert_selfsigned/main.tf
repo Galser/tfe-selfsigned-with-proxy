@@ -1,5 +1,6 @@
 resource "tls_private_key" "tfe" {
   algorithm = "ECDSA"
+	ecdsa_curve = "P384"
 }
 
 resource "tls_self_signed_cert" "tfe" {
