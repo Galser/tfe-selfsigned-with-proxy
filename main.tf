@@ -35,7 +35,7 @@ module "sshkey_aws" {
 }
 
 # Instance : Squid Proxy
-module "squidproxy" {
+/* module "squidproxy" {
   source = "github.com/Galser/tf-squid-proxy-module"
   #source          = "../"
   name            = "${var.site_record}-proxy"
@@ -48,7 +48,7 @@ module "squidproxy" {
   key_name   = module.sshkey_aws.key_id
   key_path   = "~/.ssh/id_rsa"
 }
-
+ */
 
 # Instance : AWS EC2
 module "compute_aws" {

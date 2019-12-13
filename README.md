@@ -38,8 +38,46 @@ To learn more about the mentioned above tools and technologies - please check se
 ## Deploy infrastructure
 - Clone this repo (*use the tools of your choice*)
 - Open the folder with cloned repo
+- init
+- apply 
 
 ## Install TFE
+
+q### Terminal-based portion of TFE installation
+
+- Connect to VM :
+```bash
+ssh ubuntu@tfe-ssc-3_backend.guselietov.com
+```
+> Note: Use the `public_ip` or `backend_fqdn` from the previous step
+
+- Start the PTFE install:
+```curl https://install.terraform.io/ptfe/stable | sudo bash```
+ - use Public IP-address from previous steps ( `18.184.74.49` in the example ) for the service question. You can just press [Enter],
+ - Reply `N` to proxy question. Again - you can just press [Enter]
+ Output example :
+ ```bash
+   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  133k  100  133k    0     0  30975      0  0:00:04  0:00:04 --:--:-- 30975
+Determining local address
+The installer will use network interface 'ens5' (with IP address '10.0.1.67')
+Determining service address
+The installer will use service address '18.184.74.49' (discovered from EC2 metadata service)
+The installer has automatically detected the service IP address of this machine as 18.184.74.49.
+Do you want to:
+[0] default: use 18.184.74.49
+[1] enter new address...
+...
+
+ Operator installation successful
+
+ To continue the installation, visit the following URL in your browser:
+
+ http://18.184.74.49:8800
+
+ ```
+This concludes the terminal install portion. let's continue in Web UI.
 
 ### Terminal-based portion of TFE installation
 
@@ -51,10 +89,10 @@ To learn more about the mentioned above tools and technologies - please check se
 
 
 # TODO
-- [ ] install TFE in Prod mode
-- [ ] decide on various proxy. test them - ELB, Nginx, Squid, Oops and etc.
-- [ ] create code for proxy deploy
-- [ ] deploy proxy, tweak DNS if required
+- [ ] return normal certificate for the proxy - as this is allowed for this task
+- [ ] go back to nginx, apparently SQUID in Ubuntu 18.04 now is a bummer
+due to open-ssl not compiled by default
+- [ ] test with proxy
 - [ ] connect VCS , make screenshots
 - [ ] update README for VCS part
 - [ ] create/import tests for TFE
@@ -68,6 +106,10 @@ To learn more about the mentioned above tools and technologies - please check se
 - [x] reuse code for compute infra
 - [x] import mount disk (EBS) code as module, test
 - [x] create code for self-signed cert generation
+- [x] decide on various proxy. test them - ELB, Nginx, Squid, Oops and etc.
+- [x] create code for proxy deploy
+- [x] deploy proxy, tweak DNS if required
+- [x] install TFE in Prod mode
 
 
 # Run logs
