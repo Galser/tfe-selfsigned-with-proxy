@@ -8,9 +8,9 @@ output tfe_data {
   }
 }
 
-/* output "proxy" {
+output "proxy" {
   value = {
     proxy_public_ip = module.squidproxy.public_ips
     proxy_private_ip = module.squidproxy.private_ip
   }
-} */
+} 

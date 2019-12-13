@@ -11,8 +11,10 @@ module "vpc_aws" {
 module "dns_cloudflare" {
   source = "./modules/dns_cloudflare"
 
-  host         = var.site_record
-  domain       = var.site_domain
+  host   = var.site_record
+  domain = var.site_domain
+  # replace later with Nginx proxy
+  # to have both way traffic going through it
   cname_target = module.lb_aws.fqdn
   record_ip    = module.compute_aws.public_ip
 }
@@ -35,7 +37,7 @@ module "sshkey_aws" {
 }
 
 # Instance : Squid Proxy
-/* module "squidproxy" {
+module "squidproxy" {
   source = "github.com/Galser/tf-squid-proxy-module"
   #source          = "../"
   name            = "${var.site_record}-proxy"
@@ -48,7 +50,7 @@ module "sshkey_aws" {
   key_name   = module.sshkey_aws.key_id
   key_path   = "~/.ssh/id_rsa"
 }
- */
+ 
 
 # Instance : AWS EC2
 module "compute_aws" {
@@ -95,7 +97,7 @@ module "disk_aws_snapshots" {
 }
 
 
-# Certificate : Self-signed SSL
+/* # Certificate : Self-signed SSL
 module "sslcert_selfsigned" {
 
   source = "./modules/sslcert_selfsigned/"
@@ -104,13 +106,22 @@ module "sslcert_selfsigned" {
   domain = var.site_domain
   #dns_provider = "cloudflare"  # not required for this cert
   # provider
+} */
+
+# Certificate : SSL from Let'sEncrypt
+module "sslcert_letsencrypt" {
+
+  source = "./modules/sslcert_letsencrypt"
+
+  host         = var.site_record
+  domain       = var.site_domain
+  dns_provider = "cloudflare"
 }
 
-
 resource "aws_acm_certificate" "cert" {
-  private_key      = module.sslcert_selfsigned.cert_private_key_pem
-  certificate_body = module.sslcert_selfsigned.cert_pem
-  #  certificate_chain = "${module.sslcert_selfsigned.cert_bundle}"
+  private_key       = module.sslcert_letsencrypt.cert_private_key_pem
+  certificate_body  = module.sslcert_letsencrypt.cert_pem
+  certificate_chain = module.sslcert_letsencrypt.cert_bundle
 }
 
 output "cert_key" {
