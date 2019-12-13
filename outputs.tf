@@ -1,26 +1,15 @@
-output "cert_url" {
-  #value = "${module.sslcert_letsencrypt.cert_url}"
-  value = "REAL CERTIFICATE GENERATION IS DISABLED"
+output tfe_data {
+  value = {
+    full_site_url = "${var.site_record}.${var.site_domain}"
+    #    cert_url = "REAL CERTIFICATE GENERATION IS DISABLED"
+    loadbalancer_fqdn      = module.lb_aws.fqdn
+    tfe_instance_public_ip = module.compute_aws.public_ip
+    backend_fqdn           = module.dns_cloudflare.backend_fqdn
+  }
 }
 
-output "public_ip" {
-  value = "${module.compute_aws.public_ip}"
+output "proxy" {
+  value = {
+    proxy_public_ip = module.squidproxy.public_ips
+  }
 }
-
-output "full_site_name" {
-  value = "${var.site_record}.${var.site_domain}"
-}
-
-output "loadbalancer_fqdn" {
-  value       = module.lb_aws.fqdn
-  description = "The domain name of the load balancer"
-}
-
-output "backend_fqdn" {
-  value = "${module.dns_cloudflare.backend_fqdn}"
-}
-
-output "region" {
-  value = "${var.region}"
-}
-

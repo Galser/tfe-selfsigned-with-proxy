@@ -23,7 +23,7 @@ variable "disks_tag" {
 }
 
 variable "amis" {
-  type = "map"
+  type = map
   default = {
     "us-east-2"    = "ami-00f03cfdc90a7a4dd",
     "eu-central-1" = "ami-08a162fe1419adb2a"
@@ -32,11 +32,6 @@ variable "amis" {
 
 variable "instance_type" {
   default = "m5.large"
-}
-
-variable "learntag" {
-  type    = "string"
-  default = "200tf"
 }
 
 variable "db_admin" {
