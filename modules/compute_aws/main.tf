@@ -23,7 +23,7 @@ resource "aws_instance" "ptfe" {
     user = "ubuntu"
     type = "ssh"
     #     private_key = "${file("~/.ssh/id_rsa")}"
-    private_key = "${file("${var.key_path}")}"
+    private_key = file("${var.key_path}")
     host        = self.public_ip
   }
 

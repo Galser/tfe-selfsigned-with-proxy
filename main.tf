@@ -34,6 +34,22 @@ module "sshkey_aws" {
   key_path = "~/.ssh/id_rsa.pub"
 }
 
+# Instance : Squid Proxy
+module "squidproxy" {
+  source = "github.com/Galser/tf-squid-proxy-module"
+  #source          = "../"
+  name            = "${var.site_record}-proxy"
+  ami             = var.amis[var.region]
+  instance_type   = var.instance_type
+  subnet_id       = module.vpc_aws.subnet_id
+  security_groups = [module.vpc_aws.proxy_security_group_id]
+
+  proxy_port = "3128"
+  key_name   = module.sshkey_aws.key_id
+  key_path   = "~/.ssh/id_rsa"
+}
+
+
 # Instance : AWS EC2
 module "compute_aws" {
   source = "./modules/compute_aws"
@@ -92,12 +108,12 @@ module "sslcert_selfsigned" {
 
 
 resource "aws_acm_certificate" "cert" {
-  private_key      = "${module.sslcert_selfsigned.cert_private_key_pem}"
-  certificate_body = "${module.sslcert_selfsigned.cert_pem}"
-	#  certificate_chain = "${module.sslcert_selfsigned.cert_bundle}"
+  private_key      = module.sslcert_selfsigned.cert_private_key_pem
+  certificate_body = module.sslcert_selfsigned.cert_pem
+  #  certificate_chain = "${module.sslcert_selfsigned.cert_bundle}"
 }
 
 output "cert_key" {
-	value = aws_acm_certificate.cert.private_key
+  value = aws_acm_certificate.cert.private_key
 }
 

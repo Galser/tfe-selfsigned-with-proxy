@@ -17,6 +17,10 @@ output "db_security_group_id" {
   value = "${aws_security_group.ag_tfe_Security_Group_db.id}"
 }
 
+output "proxy_security_group_id" {
+  value = "${aws_security_group.ag_tfe_Security_Group_proxy.id}"
+}
+
 output "rds_subnets" {
   value = aws_subnet.rds.*.id
 }

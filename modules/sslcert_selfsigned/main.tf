@@ -1,6 +1,6 @@
 resource "tls_private_key" "tfe" {
-  algorithm = "ECDSA"
-	ecdsa_curve = "P384"
+  algorithm   = "ECDSA"
+  ecdsa_curve = "P384"
 }
 
 resource "tls_self_signed_cert" "tfe" {
@@ -25,12 +25,12 @@ resource "tls_self_signed_cert" "tfe" {
 
 # to make life easier when installing
 resource "local_file" "ssl_private_key_file" {
-  sensitive_content = "${tls_private_key.tfe.private_key_pem}"
+  sensitive_content = tls_private_key.tfe.private_key_pem
   filename          = "./site_ssl_private_key.pem"
 }
 
 resource "local_file" "ssl_cert_file" {
-  sensitive_content = "${tls_self_signed_cert.tfe.cert_pem}"
+  sensitive_content = tls_self_signed_cert.tfe.cert_pem
   filename          = "./site_ssl_cert.pem"
 }
 
