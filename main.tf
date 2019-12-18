@@ -1,3 +1,19 @@
+# Certificate : SSL from Let'sEncrypt
+module "sslcert_letsencrypt" {
+
+  source = "./modules/sslcert_letsencrypt"
+
+  host         = var.site_record
+  domain       = var.site_domain
+  dns_provider = "cloudflare"
+}
+
+resource "aws_acm_certificate" "cert" {
+  private_key       = module.sslcert_letsencrypt.cert_private_key_pem
+  certificate_body  = module.sslcert_letsencrypt.cert_pem
+  certificate_chain = module.sslcert_letsencrypt.cert_bundle
+}
+
 # Network : AWS VPC
 module "vpc_aws" {
   source = "./modules/vpc_aws"
@@ -11,22 +27,22 @@ module "vpc_aws" {
 module "dns_cloudflare" {
   source = "./modules/dns_cloudflare"
 
-  host   = var.site_record
-  domain = var.site_domain
-  # replace later with Nginx proxy
-  # to have both way traffic going through it
+  host         = var.site_record
+  domain       = var.site_domain
   cname_target = module.lb_aws.fqdn
   record_ip    = module.compute_aws.public_ip
+  gitlab_ip    = module.gitlab.public_ips[0]
 }
 
 # Network : Load-Balancer, Classical ELB, AWS
 module "lb_aws" {
   source = "./modules/lb_aws"
 
-  name            = "ag-clb-${var.site_record}"
-  security_groups = ["${module.vpc_aws.elb_security_group_id}"]
-  subnets         = ["${module.vpc_aws.subnet_id}"]
-  instances       = ["${module.compute_aws.instance_id}"] # <-- take from module
+  name               = "ag-clb-${var.site_record}"
+  security_groups    = [module.vpc_aws.elb_security_group_id]
+  subnets            = [module.vpc_aws.subnet_id]
+  instances          = [module.compute_aws.instance_id] # <-- take from module
+  ssl_certificate_id = aws_acm_certificate.cert.id
 }
 
 # SSH Key : 
@@ -36,10 +52,10 @@ module "sshkey_aws" {
   key_path = "~/.ssh/id_rsa.pub"
 }
 
+
 # Instance : Squid Proxy
 module "squidproxy" {
-  source = "github.com/Galser/tf-squid-proxy-module"
-  #source          = "../"
+  source          = "github.com/Galser/tf-squid-proxy-module"
   name            = "${var.site_record}-proxy"
   ami             = var.amis[var.region]
   instance_type   = var.instance_type
@@ -50,7 +66,20 @@ module "squidproxy" {
   key_name   = module.sshkey_aws.key_id
   key_path   = "~/.ssh/id_rsa"
 }
- 
+
+# Instance : GitLab 
+module "gitlab" {
+  source          = "github.com/Galser/tf-gitlab-module"
+  name            = "${var.site_record}-gitlab"
+  ami             = var.amis[var.region]
+  instance_type   = var.instance_type
+  security_groups = [module.vpc_aws.gitlab_security_group_id]
+  subnet_id       = module.vpc_aws.subnet_id
+
+  external_url = "${var.site_record}-gitlab.${var.site_domain}" # not used for now
+  key_name     = module.sshkey_aws.key_id
+  key_path     = "~/.ssh/id_rsa"
+}
 
 # Instance : AWS EC2
 module "compute_aws" {
@@ -59,7 +88,7 @@ module "compute_aws" {
   name            = "ag-${var.site_record}"
   ami             = var.amis[var.region]
   instance_type   = var.instance_type
-  security_groups = ["${module.vpc_aws.security_group_id}"]
+  security_groups = [module.vpc_aws.security_group_id]
   subnet_id       = module.vpc_aws.subnet_id
   key_name        = module.sshkey_aws.key_id
   key_path        = "~/.ssh/id_rsa"
@@ -108,23 +137,8 @@ module "sslcert_selfsigned" {
   # provider
 } */
 
-# Certificate : SSL from Let'sEncrypt
-module "sslcert_letsencrypt" {
 
-  source = "./modules/sslcert_letsencrypt"
-
-  host         = var.site_record
-  domain       = var.site_domain
-  dns_provider = "cloudflare"
-}
-
-resource "aws_acm_certificate" "cert" {
-  private_key       = module.sslcert_letsencrypt.cert_private_key_pem
-  certificate_body  = module.sslcert_letsencrypt.cert_pem
-  certificate_chain = module.sslcert_letsencrypt.cert_bundle
-}
-
-output "cert_key" {
-  value = aws_acm_certificate.cert.private_key
-}
+#output "cert_key" {
+#  value = aws_acm_certificate.cert.private_key
+#}
 

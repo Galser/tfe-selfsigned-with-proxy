@@ -10,7 +10,14 @@ output tfe_data {
 
 output "proxy" {
   value = {
-    proxy_public_ip = module.squidproxy.public_ips
+    proxy_public_ip  = module.squidproxy.public_ips
     proxy_private_ip = module.squidproxy.private_ip
   }
-} 
+}
+
+output "gitlab" {
+  value = {
+    gitlab_public_ip  = module.gitlab.public_ips
+    gitlab_private_ip = module.gitlab.private_ip
+  }
+}

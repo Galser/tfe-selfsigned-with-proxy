@@ -17,3 +17,8 @@ variable "security_groups" {
   type        = list
   description = "List of security groups IDs"
 }
+
+variable "ssl_certificate_id" {
+  type        = string
+  description = "ARN of teh certificate"
+}

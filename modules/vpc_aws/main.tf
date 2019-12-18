@@ -166,6 +166,44 @@ resource "aws_security_group" "ag_tfe_Security_Group_proxy" {
   }
 } # end resource
 
+resource "aws_security_group" "ag_tfe_Security_Group_gitlab" {
+  vpc_id      = aws_vpc.ag_tfe.id
+  name        = "${var.tag}-sg-gitlab"
+  description = "${var.tag}-sg-gitlab"
+  # Allow all outbound
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    cidr_blocks = var.ingressCIDRblock
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+  }
+
+  # TFE gitlab 
+  ingress {
+    cidr_blocks = var.ingressCIDRblock
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+  }
+
+  ingress {
+    cidr_blocks = var.ingressCIDRblock
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+  }
+
+  tags = {
+    Name = "${var.tag}_security_group"
+  }
+} # end resource
 
 
 # Create the Internet Gateway

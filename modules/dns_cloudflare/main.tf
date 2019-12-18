@@ -5,7 +5,9 @@ data "cloudflare_zones" "site_zone" {
 }
 
 locals {
-  backend        = "${var.host}_backend"
+  backend = "${var.host}_backend"
+  #proxy        = "${var.host}-proxy"
+  gitlab         = "${var.host}-gitlab"
   domain_zone_id = lookup(data.cloudflare_zones.site_zone.zones[0], "id")
 }
 
@@ -22,5 +24,13 @@ resource "cloudflare_record" "site_lb" {
   name    = var.host
   value   = var.cname_target
   type    = "CNAME"
+  ttl     = 600
+}
+
+resource "cloudflare_record" "site_gitlab" {
+  zone_id = local.domain_zone_id
+  name    = local.gitlab
+  value   = var.gitlab_ip
+  type    = "A"
   ttl     = 600
 }

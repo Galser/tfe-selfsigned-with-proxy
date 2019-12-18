@@ -21,6 +21,12 @@ output "proxy_security_group_id" {
   value = "${aws_security_group.ag_tfe_Security_Group_proxy.id}"
 }
 
+output "gitlab_security_group_id" {
+  value = "${aws_security_group.ag_tfe_Security_Group_gitlab.id}"
+}
+
+
+
 output "rds_subnets" {
   value = aws_subnet.rds.*.id
 }
