@@ -52,6 +52,10 @@ ssh ubuntu@tfe-ssc-3_backend.guselietov.com
 > Note: Use the `public_ip` or `backend_fqdn` from the previous step
 
 - Start the PTFE install:
+
+curl https://install.terraform.io/ptfe/stable  > install.sh
+sudo bash ./install.sh http-proxy=http://10.0.1.66:3128
+
 ```curl https://install.terraform.io/ptfe/stable | sudo bash```
  - use Public IP-address from previous steps ( `18.184.74.49` in the example ) for the service question. You can just press [Enter],
  - Reply `N` to proxy question. Again - you can just press [Enter]

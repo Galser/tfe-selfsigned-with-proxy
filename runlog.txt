@@ -1,0 +1,128 @@
+sudo bash ./install.sh http-proxy=http://10.0.1.66:3128
+Determining local address
+The installer will use network interface 'ens5' (with IP address '10.0.1.133')
+Determining service address
+The installer will use service address '3.122.205.219' (discovered from EC2 metadata service)
+The installer has automatically detected the service IP address of this machine as 3.122.205.219.
+Do you want to:
+[0] default: use 3.122.205.219
+[1] enter new address
+Enter desired number (0-1): 0
+Installing docker version 18.09.2 from https://get.replicated.com/docker-install.sh
+# Executing docker install script, commit: UNKNOWN
++ sh -c apt-get update -qq >/dev/null
++ sh -c apt-get install -y -qq apt-transport-https ca-certificates curl >/dev/null
++ sh -c curl -fsSL "https://download.docker.com/linux/ubuntu/gpg" | apt-key add -qq - >/dev/null
+Warning: apt-key output should not be parsed (stdout is not a terminal)
++ sh -c echo "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable" > /etc/apt/sources.list.d/docker.list
++ [ ubuntu = debian ]
++ sh -c apt-get update -qq >/dev/null
+INFO: Searching repository for VERSION '18.09.2'
+INFO: apt-cache madison 'docker-ce' | grep '18.09.2.*-0~ubuntu' | head -1 | cut -d' ' -f 4
++ _status=0
++ [ -n 5:18.09.2~3-0~ubuntu-bionic ]
++ sh -c apt-get install -y -qq --no-install-recommends docker-ce-cli=5:18.09.2~3-0~ubuntu-bionic >/dev/null
++ sh -c apt-get install -y -qq --no-install-recommends docker-ce=5:18.09.2~3-0~ubuntu-bionic >/dev/null
++ [ 0 -ne 0 ]
++ sh -c docker version
+Client:
+ Version:           18.09.2
+ API version:       1.39
+ Go version:        go1.10.6
+ Git commit:        6247962
+ Built:             Sun Feb 10 04:13:47 2019
+ OS/Arch:           linux/amd64
+ Experimental:      false
+
+Server: Docker Engine - Community
+ Engine:
+  Version:          18.09.2
+  API version:      1.39 (minimum version 1.12)
+  Go version:       go1.10.6
+  Git commit:       6247962
+  Built:            Sun Feb 10 03:42:13 2019
+  OS/Arch:          linux/amd64
+  Experimental:     false
+If you would like to use Docker as a non-root user, you should now consider
+adding your user to the "docker" group with something like:
+
+  sudo usermod -aG docker your-user
+
+Remember that you will have to log out and back in for this to take effect!
+
+WARNING: Adding a user to the "docker" group will grant the ability to run
+         containers which can be used to obtain root privileges on the
+         docker host.
+         Refer to https://docs.docker.com/engine/security/security/#docker-daemon-attack-surface
+         for more information.
+External script is finished
+Synchronizing state of docker.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable docker
+
+Running preflight checks...
+[INFO] / disk usage is at 4%
+[INFO] /var/lib/docker disk usage is at 4%
+[INFO] Docker is set with http proxy "http://10.0.1.66:3128" and no proxy "10.0.1.133,127.0.0.1,172.17.0.1,localhost"
+[INFO] Docker http proxy not set
+[INFO] Docker using default seccomp profile
+[INFO] Docker using standard root directory
+[INFO] Docker icc (inter-container communication) enabled
+[INFO] Docker open files (nofile) ulimit not set
+[INFO] Docker userland proxy enabled
+[INFO] Firewalld is not active
+[INFO] Iptables chain INPUT default policy ACCEPT
+Pulling replicated and replicated-ui images
+stable-2.40.2: Pulling from replicated/replicated
+d599a449871e: Pull complete
+daa3761dbb6b: Pull complete
+35a95fd76470: Pull complete
+980cf16b58cb: Pull complete
+ef4ca893f588: Pull complete
+6c1dfa7b982a: Pull complete
+690a8015b8e7: Pull complete
+2ea89b82ab0e: Pull complete
+096eb0c9d36e: Pull complete
+6bfb2bb586f3: Pull complete
+Digest: sha256:e773425905b9931456c4da2e83fbe43f8a59d745bb3f0fa6d30119385b5f1d31
+Status: Downloaded newer image for quay.io/replicated/replicated:stable-2.40.2
+stable-2.40.2: Pulling from replicated/replicated-ui
+d599a449871e: Already exists
+a1f67635c5e1: Pull complete
+c2889b22a162: Pull complete
+fe0af6998900: Pull complete
+b15ee652c9ae: Pull complete
+cf1b91c0f2a6: Pull complete
+Digest: sha256:fc3585b4430b90376fa06e65a720c23c00fcbb25554b8147728c047eec1693fa
+Status: Downloaded newer image for quay.io/replicated/replicated-ui:stable-2.40.2
+Tagging replicated and replicated-ui images
+Stopping replicated and replicated-ui service
+Installing replicated and replicated-ui service
+Starting replicated and replicated-ui service
+Created symlink /etc/systemd/system/docker.service.wants/replicated.service → /etc/systemd/system/replicated.service.
+Created symlink /etc/systemd/system/docker.service.wants/replicated-ui.service → /etc/systemd/system/replicated-ui.service.
+Installing replicated command alias
+Installing local operator
+Installing local operator with command:
+curl -sSL -x http://10.0.1.66:3128 https://get.replicated.com/operator?replicated_operator_tag=2.40.2
+Pulling latest replicated-operator image
+stable-2.40.2: Pulling from replicated/replicated-operator
+d599a449871e: Already exists
+478d2d2e50cf: Pull complete
+952e7ee6b44f: Pull complete
+36bdc5afc87f: Pull complete
+4dbe22f673c2: Pull complete
+a399b2ea797d: Pull complete
+5b1e06d7ec0e: Pull complete
+Digest: sha256:18bda77e63c8c22c98d38064dd7c381cabc032c6079734bc2b883da0cfa8857d
+Status: Downloaded newer image for quay.io/replicated/replicated-operator:stable-2.40.2
+Tagging replicated-operator image
+Stopping replicated-operator service
+Installing replicated-operator service
+Starting replicated-operator service
+Created symlink /etc/systemd/system/docker.service.wants/replicated-operator.service → /etc/systemd/system/replicated-operator.service.
+
+Operator installation successful
+
+To continue the installation, visit the following URL in your browser:
+
+  http://3.122.205.219:8800
