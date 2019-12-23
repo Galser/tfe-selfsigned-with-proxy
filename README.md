@@ -68,6 +68,7 @@ Execution will take some time, and at the very end of the output you should see 
 Outputs:
 
 gitlab = {
+  "gitlab_fqdn" = "tfe-ssc-3-gitlab.guselietov.com"
   "gitlab_private_ip" = [
     "10.0.1.177",
   ]
@@ -180,21 +181,178 @@ Press blue **[Save]** button at the bottom of the page.
     ![Setup admin user](screenshots/7_admin_setup.png)
 
     Fill in the form and press **[Create an account]**
-- Now you are logged in the brand fresh Private Terraform Enterprise. Congratulations. You can check the next section on how to test it.
+- Now you are logged in the brand fresh Private Terraform Enterprise. Congratulations. You can check over the next section on how to test it.
+
+## Finalize GitLab configuration
+
+- Use the FQDN of GitLab from output or `public_ip` and point your browse to it. On your first visit, you'll be redirected to a password reset screen. Provide the password for the initial administrator account and you will be redirected back to the login screen. Use the default account's username root to login.
+
+> GitLab for our use-case had been installed using Omnibus package. If you want more details or tune something in the configuration - check this detailed manual : https://docs.gitlab.com/omnibus/README.html#installation-and-configuration-using-omnibus-package 
+
 
 
 ## Configure workspace and attach VCS
 
+- After first login, you will need to crate organizations as there is none at start : 
+
+![Before org creation](screenshots/8_before_org_create.png)
+
+- Press **"Create New Organizations"**, for this example we going to enter name "acme3", feel free to use your own name and email : 
+
+![Org creation](screenshots/9_create_org.png)
+
+- Now, we are going to connect VCS as a separate step . 
+  - Go to out GitLab instance and log in with admin level account. 
+
+  > Important: The account you use for connecting Terraform Enterprise must have admin (master) access to any shared repositories of Terraform configurations, since creating webhooks requires admin permissions. Do not create the application as an administrative application not owned by a user; Terraform Enterprise needs user access to repositories to create webhooks and ingress configurations.
+
+  - Navigate to GitLab's "User Settings > Applications" page.
+
+  This page is located at https://<GITLAB INSTANCE HOSTNAME>/profile/applications. 
+  You can also reach it through GitLab's menus:
+    - In the upper right corner, click your profile picture and choose "Settings."
+    - In the navigation sidebar, click "Applications."
+  
+  - This page has a list of applications and a form for adding new ones. Press green button **"Add application"** : 
+
+![Create app in GitLab](screenshots/10_gitlab_apps.png)
+
+- The form will appear , that The form has two text fields and some checkboxes : 
+
+![Create app FORM in GitLab](screenshots/11_gitlab_app_form.png)
+
+Fill it up : 
+
+| Field	        | Value |
+|---------------|-------|
+| checbox *api* |	set |
+| Name	        | Terraform Enterprise (<YOUR ORGANIZATION NAME>) |
+| Redirect URI	| https://example.com/replace-this-later (or any placeholder; the correct URI doesn't exist until the next step.) |
+
+- Click the **"Save application"** button, which creates the application and takes you to its page : 
+
+![Saved app in GitLab](screenshots/12-app-page.png)
+
+- Leave this page open in a browser tab. In the next step, you will copy and paste the unique Application ID and Secret.
+
+- Go back to our TFE in browser, we stopped at the organization creation, there should be "Add VCS Provide" button available right now, click it. 
+
+The next page has a drop-down and four text fields. Select "GitLab Community Edition" from the drop-down, and fill in all four text fields as follows:
+
+| Field	        | Value |
+|---------------|-------|
+| HTTP URL	| https://<GITLAB INSTANCE HOSTNAME> |
+| API URL	| https://<GITLAB INSTANCE HOSTNAME>/api/v4 |
+| Application ID	| (paste value from previous step) |
+| Secret	| (paste value from previous step) |
+
+- Click "Create connection." This will take you back to the VCS Provider page, which now includes your new GitLab client : 
+
+![TFE and GitLab and VCS connection](screenshots/13-tfe-and-gitlab.png)
+
+Locate the new client's "Callback URL," and copy it to your clipboard; you'll paste it in the next step. Leave this page open in a browser tab.
+
+- Go back to your GitLab browser tab. (If you accidentally closed it, you can reach your OAuth app page through the menus: use the upper right menu > Settings > Applications > "Terraform Enterprise (<YOUR ORG NAME>)".)
+
+- Click the "Edit" button.
+
+- In the "Redirect URI" field, paste the callback URL from Terraform Enterprise's VCS Provider page, replacing the "example.com" placeholder you entered earlier.
+
+- Click the "Save application" button. A banner saying the update succeeded should appear at the top of the page.
+
+- Go back to your Terraform Enterprise browser tab and click the "Connect organization <NAME>" button on the VCS Provider page.
+
+- This takes you to a page on GitLab, asking whether you want to authorize the app.
+
+- Click the green "Authorize" button at the bottom of the authorization page. This returns you to Terraform Enterorise's VCS Provider page, where the GitLab client's information has been updated.
+
+> If this results in a 500 error, it usually means Terraform Enterprise was unable to reach your GitLab instance.
+
+- Successful authorization going to end up with small banner at the bottom of the page in TFE : 
+
+![TFE and GitLab and VCS succces](screenshots/14-success-vcs-integration.png)
+
+
 ## Test commits
+
+- First we need to create project in GitLab. To create a project in GitLab:
+
+- In your dashboard, click the green New project button or use the plus icon in the navigation bar. This opens the New project page.
+
+On the New project page, choose :
+ - Create a blank project.
+ - On the Blank project tab, provide the following information:
+    - The name of your project in the Project name field. You can’t use special characters, but you can use spaces, hyphens, underscores or even emoji.
+    - The Project description (optional) field enables you to enter a description for your project’s dashboard, which will help others understand what your project is about. Though it’s not required, it’s a good idea to fill this in.
+    - Changing the Visibility Level modifies the project’s viewing and access rights for users.
+    - Selecting the Initialize repository with a README option creates a README file so that the Git repository is initialized, has a default branch, and can be cloned.
+  - Click Create project.
+
+Consult with screenshot for guidelines 
+
+> note that in screenshot we accessing project via IP address, thats why you can see Project URL not as symbolic FQDN
+
+![GitLab create project](screenshots/15-create-project.png)
+
+- Add user SSH key (the one you cna use for committing, but also for access to the future code from TFE). Visit URL http://tfe-ssc-3-gitlab.guselietov.com/profile/keys  ( in this case I am using URL from initial T~F output )  and add your SSH key : 
+
+![Upload SSH key](screenshots/16-upload-key-to-gitlab.png)
+
+![New SSH key in place](screenshots/17-gitlab-ssh-key.png)
+
+- Upload some valid TF code to the freshly create project repository, for this  demo we are going to user file [examples/main.tf](examples/main.tf) : 
+
+![Initil commit](screenshots/18-gitlab-initial-upload.png)
+
+- Commit it to the repo
+
+- Return back to the TFE, we have organization now connected to the VCS, so continue in teh same Tab and page - to  create  `Workspace` for that organization , choose our fresh repo ( **tfeminimal** in the demo ) : 
+
+![Workspace](screenshots/19-workspace.png)
+
+- Finish workspace creation. Press button **"Create workspace"** 
+
+![Workspace name](screenshots/20-end-workspace.png)
+
+- Go to the workspace settings, and ensure that they are corresponding to the screenshot below :
+  - Execution mode set to `Remote`
+  - Apply Method is `Auto apply`
+
+![Workspace settings](screenshots/21-workspace-settings.png)
+
+- Add your SSH key to the workspace. Click on Workspace Settings --> Manage SSH Keys -- and add one (same as on GitLab side). Or you cna add it per connection - choose the method you most comfortable with. 
+
+- Now. Go back to GitLab or use your favorite Git client - change for example name opf the `null_resource` on line 14 and commit it to the repo : 
+
+```terraform
+...
+resource "null_resource" "timed-hello-CHANGED" {
+  triggers = {
+    timey = "${timestamp()}"
+  }
+...
+```
+
+- Return back to the TFE Workspace's Run page and observe results pof you commit planning and applying : 
+
+![Commit-success apply](screenshots/22-commit-triggered-list.png)
+
+and as you can see in the text in screenshot - until you have proper DNS resolution and hostname on GitLab side, the webhook can fail, for example with such error : 
+
+![TFE 500](screenshots/23-tfe-error-500.png)
+
+While in the Atlas logs we can discover following clear message : 
+```bash
+/app/logs/ptfe_atlas.stdout:2019-12-17T16:58:21.568779062Z 2019-12-17 16:58:21 [INFO] [e4a0f390-212b-4c02-b82d-76c261df7455] {:external_id=>"cv-x9Kd44cWQwmBjcZZ", :controller=>"SlugIngressController", :success=>"false", :error=>"\"Failed to reach repo\"", :msg=>"Failed to ingress slug: Failed to reach repo"}
+```
+After fixing DNS, the correct results as above - successful triggering and apply of the TF code can be achieved. 
+
+
+This concludes the last section. 
+
 
 
 # TODO
-- [ ] return normal certificate for the proxy - as this is allowed for this task
-- [ ] go back to nginx, apparently SQUID in Ubuntu 18.04 now is a bummer
-due to open-ssl not compiled by default
-- [ ] test with proxy
-- [ ] connect VCS , make screenshots
-- [ ] update README for VCS part
 - [ ] create/import tests for TFE
 - [ ] test commits of tests against custom VCS, save logs & screenshots
 - [ ] update README for tests
@@ -210,6 +368,12 @@ due to open-ssl not compiled by default
 - [x] create code for proxy deploy
 - [x] deploy proxy, tweak DNS if required
 - [x] install TFE in Prod mode
+- [x] return normal certificate for the proxy - as this is allowed for this task
+- [x] go back to nginx, apparently SQUID in Ubuntu 18.04 now is a bummer
+due to open-ssl not compiled by default
+- [x] test with proxy
+- [x] connect VCS , make screenshots
+- [x] update README for VCS part
 
 
 # Run logs
@@ -231,6 +395,6 @@ due to open-ssl not compiled by default
 
 4. **Cloudflare**, - is an American web infrastructure and website security company, providing content delivery network services, DDoS mitigation, Internet security, and distributed domain name server services. More information can be found here: https://www.cloudflare.com/ 
 
-5. **ButBucket Server** -  is self-hosted Git repository collaboration and management for professional teams. You can check more in details here : https://confluence.atlassian.com/bitbucketserver
+5. **GitLab Server** -  GitLab is a web-based DevOps lifecycle tool that provides a Git-repository manager providing wiki, issue-tracking and CI/CD pipeline features, using an open-source license, developed by GitLab Inc. . You can check more in details here : https://gitlab.com/
 
 
