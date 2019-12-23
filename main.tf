@@ -76,7 +76,7 @@ module "gitlab" {
   security_groups = [module.vpc_aws.gitlab_security_group_id]
   subnet_id       = module.vpc_aws.subnet_id
 
-  external_url = "${var.site_record}-gitlab.${var.site_domain}" # not used for now
+  external_url = "${var.site_record}-gitlab.${var.site_domain}"
   key_name     = module.sshkey_aws.key_id
   key_path     = "~/.ssh/id_rsa"
 }
