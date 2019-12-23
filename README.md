@@ -38,12 +38,62 @@ To learn more about the mentioned above tools and technologies - please check se
 ## Deploy infrastructure
 - Clone this repo (*use the tools of your choice*)
 - Open the folder with cloned repo
-- init
-- apply 
+- Define your domain name in [variables.tf](variables.tf), edit on 2-nd line, following block :
+ ```terraform
+ variable "site_domain" {
+   default = "guselietov.com"
+ }
+ ```
+- Define your domain site (host) record in [variables.tf](variables.tf), edit on 6-s line, following block :
+ ```terraform
+ variable "site_record" {
+   default = "tfe-ssc-3"
+ }
+ ```
+
+- From inside folder with cloned repo init Terraform by executing :
+```
+terraform init
+```
+Example output can be found here : [terraform_init.md](terraform_init.md)
+
+- Now let's spin up everything, by executing :
+```
+terraform apply -auto-approve
+```
+Example FULL output can be found here : [terraform_apply.md](terraform_apply.md)
+
+Execution will take some time, and at the very end of the output you should see something similar to :
+```bash
+Outputs:
+
+gitlab = {
+  "gitlab_private_ip" = [
+    "10.0.1.177",
+  ]
+  "gitlab_public_ip" = [
+    "35.157.218.64",
+  ]
+}
+proxy = {
+  "proxy_private_ip" = [
+    "10.0.1.66",
+  ]
+  "proxy_public_ip" = [
+    "18.194.28.150",
+  ]
+}
+tfe_data = {
+  "backend_fqdn" = "tfe-ssc-3_backend.guselietov.com"
+  "full_site_url" = "tfe-ssc-3.guselietov.com"
+  "loadbalancer_fqdn" = "ag-clb-ag-clb-tfe-ssc-3-177845966.eu-central-1.elb.amazonaws.com"
+  "tfe_instance_public_ip" = "3.122.205.219"
+}
+```
 
 ## Install TFE
 
-q### Terminal-based portion of TFE installation
+### Terminal-based portion of TFE installation
 
 - Connect to VM :
 ```bash
@@ -51,13 +101,18 @@ ssh ubuntu@tfe-ssc-3_backend.guselietov.com
 ```
 > Note: Use the `public_ip` or `backend_fqdn` from the previous step
 
-- Start the PTFE install:
+- We want to ensure using of the proxy from the very beginning. So instead of one-liner that downloads and runs installation script, we are going to do two steps: 
 
-curl https://install.terraform.io/ptfe/stable  > install.sh
+  - Download installation script by executing : 
+  ```
+  curl https://install.terraform.io/ptfe/stable  > install.sh
+  ```
+  - Run it with specifying proxy parameter, the IP-address of the proxy can be found in the output section of `terraform apply` above - `proxy_private_ip`. Execute : 
+```
 sudo bash ./install.sh http-proxy=http://10.0.1.66:3128
+```
 
-```curl https://install.terraform.io/ptfe/stable | sudo bash```
- - use Public IP-address from previous steps ( `18.184.74.49` in the example ) for the service question. You can just press [Enter],
+ - use Public IP-address from previous steps ( `3.122.205.219` in the example ) for the service question. You can just press [Enter],
  - Reply `N` to proxy question. Again - you can just press [Enter]
  Output example :
  ```bash
@@ -67,10 +122,10 @@ sudo bash ./install.sh http-proxy=http://10.0.1.66:3128
 Determining local address
 The installer will use network interface 'ens5' (with IP address '10.0.1.67')
 Determining service address
-The installer will use service address '18.184.74.49' (discovered from EC2 metadata service)
-The installer has automatically detected the service IP address of this machine as 18.184.74.49.
+The installer will use service address '3.122.205.219' (discovered from EC2 metadata service)
+The installer has automatically detected the service IP address of this machine as 3.122.205.219.
 Do you want to:
-[0] default: use 18.184.74.49
+[0] default: use 3.122.205.219
 [1] enter new address...
 ...
 
@@ -78,14 +133,55 @@ Do you want to:
 
  To continue the installation, visit the following URL in your browser:
 
- http://18.184.74.49:8800
+ http://3.122.205.219:8800
 
  ```
 This concludes the terminal install portion. let's continue in Web UI.
 
-### Terminal-based portion of TFE installation
-
 ### Web-based portion of TFE installation
+
+- Open your favorite browser and access the link that had been presented to you at the previous step: http://3.122.205.219:8800,  As we using self-signed certificates for this part of the installation, you will see a security warning when first connecting. **This is expected and you'll need to proceed with the connection anyway.**
+- Now you will be presented with settings screen where you will need to enter hostname: `tfe-ssc-3.guselietov.com` *( this used in the example, you may have another one if you modified settings earlier)* and press button **[Use Self-Signed Cert]**
+
+   > Sometimes, depending on the speed of instance connection and external resources replies you will fail to access this screen because load-balancer could not detect that Terraform Dashboard already running and removed it from service. Just wait 30 seconds and refresh the page.
+- In the next step - you need to present your license file. Usually, it comes in a special tar-ball package with extension RLI. Press **[Choose license]**, Locate the file and upload.
+- The next screen allows you to select between *Online* and *air-gapped* installation. Choose **[Online]** and press **[Continue]** button
+- At the next step, you will need to enter the password, that can be used in the future to access THIS, Admin Console. Enter the desired password, and press **[continue]**
+- Now you will see the *"Preflight Checks"* when all the main requirements for the PTFE installation checked and the one that passed marked with a green checkmark. They ALL should be green to pass.
+Once more, press **[Continue]** button
+- The next screen presents all your settings in one place
+    - Check that host FQDN is correct
+    - Scroll down to the *Installation Type* section and select **[Production]**
+    - Now in the next section *Production Type* select **[Mounted Disk]**
+    - Below it, in the *Mounted Disk Configuration* enter path : `/tfe-data`
+
+    Consult the screenshot for guidance :
+
+    ![Prod Settings](screenshots/3_3_settings_prod.png)
+   After that - press **[Save]** button at the bottom of the page to save all your settings. And you going to be present with the following informational screen :
+![Settings saved, restart now](screenshots/4_restat_now.png)
+ Press **[Restart Now]**
+- At this moment PTFE will do a full start of all internal services, it can take a couple of minutes, refresh the windows from time to time :
+![Starting dashboard](screenshots/5_starting.png)
+  > Note:..Depending on your browser and/or browser settings the starting in the left part of Dashboard - never changes unless you reload the page. So force-reload the page after 2-3 minutes.
+- While TFE starting, please access top-right menu with settings, "Console Settings" item. In the opened page, find section *Snapshot & Restore*. In the filed **"Snapshot File Destination"** enter : `/tfe-snapshots`.
+Press blue **[Save]** button at the bottom of the page.
+- You can double-check that proxy is used at the section "HTTP Proxy" : 
+
+    ![Proxy](screenshots/proxy-double-check.png)
+
+- Return to the dashboard. Wait a couple of minutes for the state at the left rectangle to be changed to **Started**. Now, below the button [Stop now] there is link **[Open]** :
+
+    ![Started](screenshots/6_started.png)
+
+    Open it, this will lead you to the first-time setup of the admin user :
+- Set up your admin user :
+
+    ![Setup admin user](screenshots/7_admin_setup.png)
+
+    Fill in the form and press **[Create an account]**
+- Now you are logged in the brand fresh Private Terraform Enterprise. Congratulations. You can check the next section on how to test it.
+
 
 ## Configure workspace and attach VCS
 
