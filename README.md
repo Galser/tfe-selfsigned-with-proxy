@@ -356,8 +356,7 @@ This concludes the last section.
 
 
 # TODO
-- [ ] update screenshots
-- [ ] final README update
+
 
 
 # DONE
@@ -378,7 +377,8 @@ due to open-SSL not compiled by default
 - [x] create/import tests for TFE
 - [x] test commits of tests against custom VCS, save logs & screenshots
 - [x] update README for tests
-
+- [x] update screenshots
+- [x] final README update
 
 # Run logs
 
