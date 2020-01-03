@@ -354,7 +354,13 @@ After fixing DNS, the correct results are as above - successful triggering and a
 
 This concludes the last section. 
 
+When you satisfied with all your tests - you can destroy the whole infrastructure by executing in the cloned repo folder :
+```bash
+terraform destroy
+```
+And answering 'yes' to the question.
 
+Example FULL output of destroy can be found here : [terraform_destroy.md](terraform_destroy.md)
 
 # TODO
 
