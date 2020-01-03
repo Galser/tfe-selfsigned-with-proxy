@@ -164,7 +164,7 @@ Once more, press **[Continue]** button
    After that - press **[Save]** button at the bottom of the page to save all your settings. And you going to be present with the following informational screen :
 ![Settings saved, restart now](screenshots/4_restat_now.png)
  Press **[Restart Now]**
-- At this moment PTFE will do a full start of all internal services, it can take a couple of minutes, refresh the windows from time to time :
+- At this moment PTFE will do a full start of all internal services, it can take a couple of minutes, refresh the window from time to time :
 ![Starting dashboard](screenshots/5_starting.png)
   > Note:..Depending on your browser and/or browser settings the starting in the left part of Dashboard - never changes unless you reload the page. So force-reload the page after 2-3 minutes.
 - While TFE starting, please access the top-right menu with settings, "Console Settings" item. In the opened page, find section *Snapshot & Restore*. In the filed **"Snapshot File Destination"** enter : `/tfe-snapshots`.
@@ -173,17 +173,17 @@ Press blue **[Save]** button at the bottom of the page.
 
     ![Proxy](screenshots/proxy-double-check.png)
 
-- Return to the dashboard. Wait a couple of minutes for the state at the left rectangle to be changed to **Started**. Now, below the button [Stop now] there is link **[Open]** :
+- Return to the dashboard. Wait a couple of minutes for the state in the left rectangle to be changed to **Started**. Now, below the button **[Stop now]** there is link **[Open]** :
 
     ![Started](screenshots/6_started.png)
 
-    Open it, this will lead you to the first-time setup of the admin user :
+    Open it. This will lead you to the first-time setup of the admin user :
 - Set up your admin user :
 
     ![Setup admin user](screenshots/7_admin_setup.png)
 
     Fill in the form and press **[Create an account]**
-- Now you are logged in the brand fresh Private Terraform Enterprise. Congratulations. You can check over the next section on how to test it.
+- Now you are logged in the brand fresh Terraform Enterprise. Congratulations. You can check over the next section on how to test it.
 
 ## Finalize GitLab configuration
 
@@ -194,6 +194,8 @@ Press blue **[Save]** button at the bottom of the page.
 
 
 ## Configure workspace and attach VCS
+
+Back to TFE
 
 - After the first login, you will need to create organizations as there is none at the start : 
 
@@ -210,7 +212,7 @@ Press blue **[Save]** button at the bottom of the page.
 
   - Navigate to GitLab's "User Settings > Applications" page.
 
-  This page is located at https://<GITLAB INSTANCE HOSTNAME>/profile/applications. 
+  This page is located at https://**GITLAB INSTANCE HOSTNAME**/profile/applications. 
   You can also reach it through GitLab's menus:
     - In the upper right corner, click your profile picture and choose "Settings."
     - In the navigation sidebar, click "Applications."
@@ -228,7 +230,7 @@ Fill it up :
 | Field            | Value |
 |---------------|-------|
 | checkbox *API* |    set |
-| Name            | Terraform Enterprise (<YOUR ORGANIZATION NAME>) |
+| Name            | Terraform Enterprise (**YOUR ORGANIZATION NAME**) |
 | Redirect URI    | https://example.com/replace-this-later (or any placeholder; the correct URI doesn't exist until the next step.) |
 
 - Click the **"Save application"** button, which creates the application and takes you to its page : 
@@ -243,8 +245,8 @@ The next page has a drop-down and four text fields. Select "GitLab Community Edi
 
 | Field            | Value |
 |---------------|-------|
-| HTTP URL    | https://<GITLAB INSTANCE HOSTNAME> |
-| API URL    | https://<GITLAB INSTANCE HOSTNAME>/api/v4 |
+| HTTP URL    | https://**GITLAB INSTANCE HOSTNAME** |
+| API URL    | https://**GITLAB INSTANCE HOSTNAME**/api/v4 |
 | Application ID    | (paste value from the previous step) |
 | Secret    | (paste value from the previous step) |
 
@@ -390,13 +392,11 @@ due to open-SSL not compiled by default
 1. **To download the content of this repository** you will need **git command-line tools**(recommended) or **Git UI Client**. To install official command-line Git tools please [find here instructions](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) for various operating systems. 
 
 2. **For managing infrastructure** we using Terraform - open-source infrastructure as a code software tool created by HashiCorp. It enables users to define and provision a data center infrastructure using a high-level configuration language known as Hashicorp Configuration Language, or optionally JSON. More you encouraged to [learn here](https://www.terraform.io).
- - Specifically, we going to use Terraform for creating infrastructure, and install Terraform Enterprise. TFE Overview: can be found here: https://www.terraform.io/docs/enterprise/index.html
- - Pre-Install checklist: https://www.terraform.io/docs/enterprise/before-installing/index.html
+   - Specifically, we going to use Terraform for creating infrastructure, and install Terraform Enterprise. *TFE Overview* can be found here: https://www.terraform.io/docs/enterprise/index.html
+   - Pre-Install checklist: https://www.terraform.io/docs/enterprise/before-installing/index.html
 
 3. **This project for virtualization** uses **AWS EC2** - Amazon Elastic Compute Cloud (Amazon EC2 for short) - a web service that provides secure, resizable compute capacity in the cloud. It is designed to make web-scale cloud computing easier for developers. You can read in details and create a free try-out account if you don't have one here : [Amazon EC2 main page](https://aws.amazon.com/ec2/) 
 
 4. **Cloudflare**, - is an American web infrastructure and website security company, providing content delivery network services, DDoS mitigation, Internet security, and distributed domain name server services. More information can be found here: https://www.cloudflare.com/ 
 
 5. **GitLab Server** -  GitLab is a web-based DevOps lifecycle tool that provides a Git-repository manager providing wiki, issue-tracking, and CI/CD pipeline features, using an open-source license, developed by GitLab Inc. You can check more in details here: https://gitlab.com/
-
-
