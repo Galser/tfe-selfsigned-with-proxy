@@ -1,5 +1,6 @@
 # tfe-selfsigned-with-proxy
-Choose one install you feel comfortable with, and use proxy and git (gitlab or bitbucket) all with self-signed SSL cert 
+Choose one install you feel comfortable with, and use proxy and git (gitlab or bitbucket) all with self-signed SSL cert
+LB can be on real certificate.
 
 Based on: https://github.com/Galser/ptfe-prodmount-vc-cloud-backuprestore
 
