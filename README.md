@@ -51,7 +51,7 @@ To learn more about the mentioned above tools and technologies - please check se
  }
  ```
 
-- From inside folder with cloned repo init Terraform by executing :
+- From inside folder with cloned repo `init Terraform` by executing :
 ```
 terraform init
 ```
@@ -104,7 +104,7 @@ ssh ubuntu@tfe-ssc-3_backend.guselietov.com
 ```
 > Note: Use the `public_ip` or `backend_fqdn` from the previous step
 
-- We want to ensure using the proxy from the very beginning. So instead of one-liner that downloads and runs installation script, we are going to do two steps: 
+- We want to ensure usage of the proxy from the very beginning. So instead of one-liner that downloads and runs installation script, we are going to do two steps: 
 
   - Download installation script by executing : 
   ```
@@ -116,7 +116,7 @@ sudo bash ./install.sh http-proxy=http://10.0.1.66:3128
 ```
 
  - use Public IP-address from previous steps ( `3.122.205.219` in the example ) for the service question. You can just press [Enter],
- - Reply `N` to proxy question. Again - you can just press [Enter]
+ 
  Output example :
  ```bash
    % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
@@ -139,7 +139,7 @@ Do you want to:
  http://3.122.205.219:8800
 
  ```
-This concludes the terminal install portion. let's continue in Web UI.
+This concludes the terminal install portion. Let's continue in Web UI.
 
 ### Web-based portion of TFE installation
 
@@ -147,7 +147,7 @@ This concludes the terminal install portion. let's continue in Web UI.
 - Now you will be presented with settings screen where you will need to enter hostname: `tfe-ssc-3.guselietov.com` *( this used in the example, you may have another one if you modified settings earlier)* and press button **[Use Self-Signed Cert]**
 
    > Sometimes, depending on the speed of instance connection and external resources replies you will fail to access this screen because load-balancer could not detect that Terraform Dashboard already running and removed it from service. Just wait 30 seconds and refresh the page.
-- In the next step - you need to present your license file. Usually, it comes in a special tar-ball package with extension RLI. Press **[Choose license]**, Locate the file and upload.
+- In the next step - you need to give your license file. Usually, it comes in a special tar-ball package with extension RLI. Press **[Choose license]**, Locate the file and upload.
 - The next screen allows you to select between *Online* and *air-gapped* installation. Choose **[Online]** and press **[Continue]** button
 - At the next step, you will need to enter the password, that can be used in the future to access THIS, Admin Console. Enter the desired password, and press **[continue]**
 - Now you will see the *"Preflight Checks"* when all the main requirements for the PTFE installation checked and the one that passed marked with a green checkmark. They ALL should be green to pass.
@@ -192,10 +192,9 @@ Press blue **[Save]** button at the bottom of the page.
 > GitLab for our use-case had been installed using the Omnibus package. If you want more details or tune something in the configuration - check this detailed manual: https://docs.gitlab.com/omnibus/README.html#installation-and-configuration-using-omnibus-package 
 
 
-
 ## Configure workspace and attach VCS
 
-Back to TFE
+Back to TFE.
 
 - After the first login, you will need to create organizations as there is none at the start : 
 
@@ -304,13 +303,13 @@ Consult with screenshot for guidelines
 
 ![New SSH key in place](screenshots/17-gitlab-ssh-key.png)
 
-- Upload some valid TF code to the freshly create project repository, for this  demo we are going to user file [examples/main.tf](examples/main.tf) : 
+- Upload some valid TF code to the freshly created project repository, for this  demo we are going to use file [examples/main.tf](examples/main.tf) : 
 
-![Initil commit](screenshots/18-gitlab-initial-upload.png)
+![Initial commit](screenshots/18-gitlab-initial-upload.png)
 
 - Commit it to the repo
 
-- Return to the TFE, we have organization now connected to the VCS, so continue in the same Tab and page - to  create  `Workspace` for that organization, choose our fresh repo ( **tfeminimal** in the demo ) : 
+- Return to the TFE; we have organization now connected to the VCS, so continue in the same Tab and page - to  create  `Workspace` for that organization, choose our fresh repo ( **tfeminimal** in the demo ) : 
 
 ![Workspace](screenshots/19-workspace.png)
 
@@ -318,15 +317,15 @@ Consult with screenshot for guidelines
 
 ![Workspace name](screenshots/20-end-workspace.png)
 
-- Go to the workspace settings, and ensure that they are corresponding to the screenshot below :
+- Go to the workspace settings and ensure that they are corresponding to the screenshot below :
   - Execution mode set to `Remote`
   - Apply Method is `Auto apply`
 
 ![Workspace settings](screenshots/21-workspace-settings.png)
 
-- Add your SSH key to the workspace. Click on Workspace Settings --> Manage SSH Keys -- and add one (same as on GitLab side). Or you can add it per connection - choose the method you most comfortable with. 
+- Add your SSH key to the workspace. Click on **Workspace Settings** --> **Manage SSH Keys** - and add one (same as on GitLab side). Or you can add it per connection - choose the method you most comfortable with. 
 
-- Now. Go back to GitLab or use your favorite Git client - change for example name of the `null_resource` on line 14 and commit it to the repo : 
+- Now. Go back to GitLab WebUI or use your favorite Git client. We need to introduce some changes to our TF code in repo.   Change for example name of the `null_resource` on line 14 and commit it to the repo : 
 
 ```terraform
 ...
@@ -341,7 +340,7 @@ resource "null_resource" "timed-hello-CHANGED" {
 
 ![Commit-success apply](screenshots/22-commit-triggered-list.png)
 
-and as you can see in the text in the screenshot - until you have proper DNS resolution and hostname on GitLab side, the webhook can fail, for example with such error : 
+Below, as you can see in the text in the screenshot - until you have proper DNS resolution and hostname on GitLab side, the webhook can fail, for example with such error : 
 
 ![TFE 500](screenshots/23-tfe-error-500.png)
 
@@ -349,7 +348,7 @@ While in the Atlas logs we can discover following clear message :
 ```bash
 /app/logs/ptfe_atlas.stdout:2019-12-17T16:58:21.568779062Z 2019-12-17 16:58:21 [INFO] [e4a0f390-212b-4c02-b82d-76c261df7455] {:external_id=>"cv-x9Kd44cWQwmBjcZZ", :controller=>"SlugIngressController", :success=>"false", :error=>"\"Failed to reach repo\"", :msg=>"Failed to ingress slug: Failed to reach repo"}
 ```
-After fixing DNS, the correct results as above - successful triggering and apply of the TF code can be achieved. 
+After fixing DNS, the correct results are as above - successful triggering and applying of the TF code can be achieved. 
 
 
 This concludes the last section. 
@@ -357,6 +356,7 @@ This concludes the last section.
 
 
 # TODO
+- [ ] update screenshots
 - [ ] final README update
 
 
