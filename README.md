@@ -93,7 +93,13 @@ tfe_data = {
 }
 ```
 
-We have the infrastructure and most of the required software ready, now let's proceed to the next section and install TFE
+We have the infrastructure and most of the required software ready, now let's proceed to the next sections finalize GitLab settings and install TFE
+
+## Finalize GitLab configuration
+
+- Use the FQDN of GitLab from output or `public_ip` and point your browser to it. On your first visit, you'll be redirected to a password reset screen. Provide the password for the initial administrator account and you will be redirected back to the login screen. Use the default account's username root to login.
+
+> GitLab for our use-case had been installed using the Omnibus package. If you want more details or tune something in the configuration - check this detailed manual: https://docs.gitlab.com/omnibus/README.html#installation-and-configuration-using-omnibus-package 
 
 ## Install TFE
 
@@ -144,7 +150,7 @@ This concludes the terminal install portion. Let's continue in Web UI.
 
 ### Web-based portion of TFE installation
 
-- Open your favorite browser and access the link that had been presented to you at the previous step: http://3.122.205.219:8800,  As we using self-signed certificates for this part of the installation, you will see a security warning when first connecting. **This is expected and you'll need to proceed with the connection anyway.**
+- Open your favorite browser and access the link that had been presented to you at the previous step: http://3.122.205.219:8800,  As we using self-signed certificates in this project, you will see a security warning when first connecting. **This is expected and you'll need to proceed with the connection anyway.**
 - Now you will be presented with settings screen where you will need to enter hostname: `tfe-ssc-3.guselietov.com` *( this used in the example, you may have another one if you modified settings earlier)* and press button **[Use Self-Signed Cert]**
 
    > Sometimes, depending on the speed of instance connection and external resources replies you will fail to access this screen because load-balancer could not detect that Terraform Dashboard already running and removed it from service. Just wait 30 seconds and refresh the page.
@@ -162,15 +168,13 @@ Once more, press **[Continue]** button
     Consult the screenshot for guidance :
 
     ![Prod Settings](screenshots/3_3_settings_prod.png)
-   After that - press **[Save]** button at the bottom of the page to save all your settings. And you going to be present with the following informational screen :
+   After that - press **[Save]** button at the bottom of the page to save all your settings. And you going to be presented with the following informational screen :
 ![Settings saved, restart now](screenshots/4_restat_now.png)
  Press **[Restart Now]**
 - At this moment PTFE will do a full start of all internal services, it can take a couple of minutes, refresh the window from time to time :
 ![Starting dashboard](screenshots/5_starting.png)
   > Note:..Depending on your browser and/or browser settings the starting in the left part of Dashboard - never changes unless you reload the page. So force-reload the page after 2-3 minutes.
-- While TFE starting, please access the top-right menu with settings, "Console Settings" item. In the opened page, find section *Snapshot & Restore*. In the filed **"Snapshot File Destination"** enter : `/tfe-snapshots`.
-Press blue **[Save]** button at the bottom of the page.
-- You can double-check that proxy is used in the section "HTTP Proxy" : 
+- While TFE starting, please access the top-right menu with settings, "Console Settings" item. In the opened page, find section "HTTP Proxy", where you can double-check that proxy is used : 
 
     ![Proxy](screenshots/proxy-double-check.png)
 
@@ -184,18 +188,10 @@ Press blue **[Save]** button at the bottom of the page.
     ![Setup admin user](screenshots/7_admin_setup.png)
 
     Fill in the form and press **[Create an account]**
-- Now you are logged in the brand fresh Terraform Enterprise. Congratulations. You can check over the next section on how to test it.
-
-## Finalize GitLab configuration
-
-- Use the FQDN of GitLab from output or `public_ip` and point your browser to it. On your first visit, you'll be redirected to a password reset screen. Provide the password for the initial administrator account and you will be redirected back to the login screen. Use the default account's username root to login.
-
-> GitLab for our use-case had been installed using the Omnibus package. If you want more details or tune something in the configuration - check this detailed manual: https://docs.gitlab.com/omnibus/README.html#installation-and-configuration-using-omnibus-package 
+- Now you are logged in the brand fresh Terraform Enterprise. Congratulations. You can check in the next section on how to test it.
 
 
 ## Configure workspace and attach VCS
-
-Back to TFE.
 
 - After the first login, you will need to create organizations as there is none at the start : 
 
@@ -225,7 +221,7 @@ Back to TFE.
 
 ![Create app FORM in GitLab](screenshots/11_gitlab_app_form.png)
 
-Fill it up : 
+Fill it up as per table below : 
 
 | Field            | Value |
 |---------------|-------|
@@ -239,7 +235,7 @@ Fill it up :
 
 - Leave this page open in a browser tab. In the next step, you will copy and paste the unique Application ID and Secret.
 
-- Go back to our TFE in the browser, we stopped at the organization creation, there should be "Add VCS Provide" button available right now, click it. 
+- Go back to our TFE in the browser, we stopped at the organization creation, there should be **"Add VCS Provider"** button available right now, click it. 
 
 The next page has a drop-down and four text fields. Select "GitLab Community Edition" from the drop-down, and fill in all four text fields as follows:
 
@@ -256,21 +252,21 @@ The next page has a drop-down and four text fields. Select "GitLab Community Edi
 
 Locate the new client's "Callback URL," and copy it to your clipboard; you'll paste it in the next step. Leave this page open in a browser tab.
 
-- Go back to your GitLab browser tab. (If you accidentally closed it, you can reach your OAuth app page through the menus: use the upper right menu > Settings > Applications > "Terraform Enterprise (<YOUR ORG NAME>)".)
+- Go back to your GitLab browser tab. (If you accidentally closed it, you can reach your OAuth app page through the menus: use the upper right menu > Settings > Applications > "Terraform Enterprise ( YOUR ORG NAME )".)
 
-- Click the "Edit" button.
+- Click the **"Edit"** button.
 
 - In the "Redirect URI" field, paste the callback URL from Terraform Enterprise's VCS Provider page, replacing the "example.com" placeholder you entered earlier.
 
-- Click the "Save application" button. A banner saying the update succeeded should appear at the top of the page.
+- Click the **"Save application"** button. A banner saying the update succeeded should appear at the top of the page.
 
-- Go back to your Terraform Enterprise browser tab and click the "Connect organization <NAME>" button on the VCS Provider page.
+- Go back to your Terraform Enterprise browser tab and click the "Connect organization **NAME**" button on the VCS Provider page.
 
 - This takes you to a page on GitLab, asking whether you want to authorize the app.
 
-- Click the green "Authorize" button at the bottom of the authorization page. This returns you to Terraform Enterprise's VCS Provider page, where the GitLab client's information has been updated.
+- Click the green **"Authorize"** button at the bottom of the authorization page. This returns you to Terraform Enterprise's VCS Provider page, where the GitLab client's information has been updated.
 
-> If this results in a 500 error, it usually means Terraform Enterprise was unable to reach your GitLab instance.
+> If this results in a 500 error, it usually means Terraform Enterprise was unable to reach your GitLab instance. Fix network problems and try once more.
 
 - Successful authorization going to end up with a small banner at the bottom of the page in TFE : 
 
@@ -349,7 +345,7 @@ While in the Atlas logs we can discover following clear message :
 ```bash
 /app/logs/ptfe_atlas.stdout:2019-12-17T16:58:21.568779062Z 2019-12-17 16:58:21 [INFO] [e4a0f390-212b-4c02-b82d-76c261df7455] {:external_id=>"cv-x9Kd44cWQwmBjcZZ", :controller=>"SlugIngressController", :success=>"false", :error=>"\"Failed to reach repo\"", :msg=>"Failed to ingress slug: Failed to reach repo"}
 ```
-After fixing DNS, the correct results are as above - successful triggering and applying of the TF code can be achieved. 
+E.g. **"Failed to reach repo"**, network-level (DNS) problem. After fixing DNS, the correct results are as above - successful triggering and applying of the TF code can be achieved. 
 
 
 This concludes the last section. 
